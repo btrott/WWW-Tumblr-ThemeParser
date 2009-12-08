@@ -33,6 +33,7 @@ sub _tokenize {
     my @tokens;
     my $pos = 0;
 
+    my %in;
     while ( $$text_ref =~ /$Tags/gs ) {
         my( $match, $tag ) = ( $1, $2 );
         my $tag_start = pos( $$text_ref ) - length $match;
@@ -43,8 +44,26 @@ sub _tokenize {
             push @tokens, [ 'TEXT', substr( $$text_ref, $pos, $tag_start - $pos ) ];
         }
 
-        if ( $tag =~ /^(\/?)block:/ ) {
+        if ( $tag =~ /^(\/?)block:/ ) {            
             my $type = $1 ? 'EBLOCK' : 'SBLOCK';
+
+            # Tumblr's parser doesn't allow nested block tags, so with HTML
+            # like "{block:Title}...{block:Title}", the second "{block:Title}"
+            # is treated as an end tag, even though it doesn't have a slash.
+            # Implement the same behavior here by tracking which blocks
+            # we're inside of, and turning what would appear to be nested
+            # blocks into a single contained block.
+            if ( $type eq 'SBLOCK' && exists $in{ $tag } ) {
+                $type = 'EBLOCK';
+                $tag = '/' . $tag;
+            }
+
+            if ( $type eq 'SBLOCK' ) {
+                $in{ $tag }++;
+            } else {
+                delete $in{ $tag };
+            }
+
             push @tokens, [ $type, $tag ];
         } elsif ( $tag =~ /^(\w+):([\w\s]+)$/ ) {
             push @tokens, [ 'SETTING', $1, $2 ];
