@@ -40,8 +40,11 @@ sub get_tests {
         },
         {
             comment => 'no slash on end-block tag',
-            html => '{block:Posts}...{block:Posts}',
+            html => '{block:Posts}...{block:Posts}{block:Posts}...{/block:Posts}',
             tokens => [
+                [ 'SBLOCK', 'block:Posts' ],
+                [ 'TEXT', '...' ],
+                [ 'EBLOCK', '/block:Posts' ],
                 [ 'SBLOCK', 'block:Posts' ],
                 [ 'TEXT', '...' ],
                 [ 'EBLOCK', '/block:Posts' ],

@@ -61,7 +61,9 @@ sub _tokenize {
             if ( $type eq 'SBLOCK' ) {
                 $in{ $tag }++;
             } else {
-                delete $in{ $tag };
+                # $tag will look like "/block:Foo", so use substr to
+                # strip off the leading "/".
+                delete $in{ substr $tag, 1 };
             }
 
             push @tokens, [ $type, $tag ];
