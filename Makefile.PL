@@ -2,6 +2,7 @@ use inc::Module::Install;
 name 'WWW-Tumblr-ThemeParser';
 all_from 'lib/WWW/Tumblr/ThemeParser.pm';
 readme_from 'lib/WWW/Tumblr/ThemeParser.pm';
+requires 'Class::Accessor::Fast';
 requires 'HTML::TokeParser';
 build_requires 'Test::More';
 use_test_base;
