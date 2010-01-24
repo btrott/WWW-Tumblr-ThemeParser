@@ -5,7 +5,7 @@ use base qw( Class::Accessor::Fast );
 use 5.008_001;
 use HTML::TokeParser;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 __PACKAGE__->mk_accessors( qw( tokens index settings ) );
 
